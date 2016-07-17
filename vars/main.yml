@@ -1,0 +1,23 @@
+---
+# example of variable containing the targetcli configuration
+# iscsi_targets:
+#   - target1:
+#     wwn: "iqn.1994-05.com.redhat:shit2"
+#     disks:
+#       - disk1:
+#         path: /dev/c7vg/LV1
+#         name: test1
+#         type: block
+#       - disk2:
+#         path: /dev/c7vg/LV2
+#         name: test2
+#         type: block
+#       - disk3:
+#         path: /dev/c7vg/LV3
+#         name: test3
+#         type: block
+#     initiators:
+#       - client1:
+#         wwn: iqn.1994-05.com.redhat:client1
+#       - client2:
+#         wwn: iqn.1994-05.com.redhat:client2

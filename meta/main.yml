@@ -1,0 +1,15 @@
+---
+galaxy_info:
+  author: Ondrej Faměra
+  description: targetcli target iSCSI role.
+  license: GPLv3
+  min_ansible_version: 1.9
+  platforms:
+  - name: EL
+    versions:
+    - 7
+  categories:
+  - system
+  - storage
+  - storage:iscsi
+dependencies: []
