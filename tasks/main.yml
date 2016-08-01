@@ -8,7 +8,7 @@
 - name: Enable port 3260/tcp on firewalld
   firewalld: port=3260/tcp permanent=true state=enabled
   notify:
-    - restart firewalld
+    - reload firewalld
 
 - name: define backstore objects
   targetcli_backstore: backstore_type={{ item.1.type }} backstore_name={{ item.1.name }} path={{ item.1.path }}
