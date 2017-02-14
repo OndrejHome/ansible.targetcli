@@ -39,7 +39,7 @@ define new block backstore from disk/LV /dev/c7vg/LV1
 - targetcli_backstore: backstore_type=block backstore_name=test1 path=/dev/c7vg/LV1
 
 remove block backstore from disk/LV /dev/c7vg/LV2
-- targetcli_backstore: backstore_type=block backstore_name=test2 path=/dev/c7vg/LV2 state=absent
+- targetcli_backstore: backstore_type=block backstore_name=test2 state=absent
 
 '''
 
@@ -48,16 +48,15 @@ def main():
                 argument_spec = dict(
                         backstore_type=dict(required=True),
                         backstore_name=dict(required=True),
-                        path=dict(required=True),
+                        path=dict(required=False),
                         state=dict(default="present", choices=['present', 'absent']),
                 ),
                 supports_check_mode=True
         )
 
-        backstore_type = module.params['backstore_type']
-        backstore_name = module.params['backstore_name']
-        path = module.params['path']
         state = module.params['state']
+        if state == 'present' and not module.params['path']:
+            module.fail_json(msg="Missing path parameter needed for creating backstore object")
 
         result = {}
         
