@@ -11,7 +11,7 @@
     - restart firewalld
 
 - name: define backstore objects
-  targetcli_backstore: backstore_type={{ item.1.type }} backstore_name={{ item.1.name }} path={{ item.1.path }}
+  targetcli_backstore: backstore_type={{ item.1.type }} backstore_name={{ item.1.name }} options={{ item.1.path }}
   with_subelements:
     - "{{ iscsi_targets }}"
     - disks

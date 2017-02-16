@@ -3,7 +3,7 @@ targetcli
 
 Targetcli target iSCSI role which takes care of installing targetcli, enabling it on boot and configuring it based on the provided variable from ansible.
 
-Additionaly this role includes own python mudules to interact with targetcli command which can be used separately for more advanced stuff. Modules implement checking, creating and deleting.
+NOTE: Modules used by this module were separated into role OndrejHome.targetcli-modules
 
 Requirements
 ------------
