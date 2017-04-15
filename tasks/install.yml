@@ -16,8 +16,3 @@
     name: target
     enabled: yes
     state: started
-
-- name: Enable port 3260/tcp on firewalld
-  firewalld: port=3260/tcp permanent=true state=enabled
-  notify:
-    - restart firewalld
