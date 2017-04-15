@@ -20,7 +20,7 @@
 - name: define ACLs for iSCSI targets
   targetcli_iscsi_acl:
     wwn: "{{ target.wwn }}"
-    initiator_wwn: "{{ initiator.wwn }}"
+    initiator_wwn: "{{ initiator }}"
   with_items:
     - "{{ target.initiators }}"
   loop_control:
