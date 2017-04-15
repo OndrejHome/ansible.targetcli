@@ -1,0 +1,18 @@
+---
+- name: Install targetcli apt packages
+  apt:
+    name: targetcli
+    state: installed
+  when: ansible_pkg_mgr == "apt"
+
+- name: Install targetcli yum packages
+  yum: 
+    name: targetcli
+    state: installed
+  when: ansible_pkg_mgr == "yum"
+
+- name: Start and enable targetcli service
+  service: 
+    name: target
+    enabled: yes
+    state: started

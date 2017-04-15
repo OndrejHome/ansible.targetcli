@@ -1,16 +1,23 @@
 ---
 galaxy_info:
-  author: Ondrej Faměra
-  description: targetcli target iSCSI role.
+  author: Ondrej Faměra, modified by Michel Weitbrecht
+  description: iSCSI target role using targetcli
+  company: stuvus (https://stuvus.uni-stuttgart.de)
+
   license: GPLv3
   min_ansible_version: 1.9
+
   platforms:
-  - name: EL
-    versions:
-    - 7
+    - name: Ubuntu
+      versions:
+        - yakkety
+    - name: Debian
+      versions:
+        - jessie
   galaxy_tags:
-  - system
+  - stuvus
   - storage
-  - storage:iscsi
-dependencies:
-  - { role: OndrejHome.targetcli-modules }
+  - iscsi
+  - ubuntu
+  - target
+# dependencies omitted as they can't be installed automatically yet
