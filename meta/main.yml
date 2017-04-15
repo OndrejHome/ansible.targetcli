@@ -15,10 +15,10 @@ galaxy_info:
       versions:
         - jessie
   galaxy_tags:
-  - system
+  - stuvus
   - storage
-  - storage:iscsi
+  - iscsi
   - ubuntu
   - target
 dependencies:
-  - { role: stuvus.targetcli-modules }
+  - { role: OndrejHome.targetcli-modules }
