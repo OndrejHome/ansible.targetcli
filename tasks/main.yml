@@ -1,41 +1,7 @@
 ---
-- name: Install targetcli packages
-  yum: name=targetcli state=installed
-
-- name: Start and enable targetcli service
-  service: name=target enabled=yes state=started
-
-- name: Enable port 3260/tcp on firewalld
-  firewalld: port=3260/tcp permanent=true state=enabled
-  notify:
-    - restart firewalld
-
-- name: define backstore objects
-  targetcli_backstore: backstore_type={{ item.1.type }} backstore_name={{ item.1.name }} options={{ item.1.path }}
-  with_subelements:
+- include: install.yml
+- include: configure-target.yml
+  with_items: 
     - "{{ iscsi_targets }}"
-    - disks
-  notify:
-    - save targetcli configuration
-
-- name: create iSCSI targets
-  targetcli_iscsi: wwn={{ item.wwn }}
-  with_items: "{{ iscsi_targets }}"
-  notify:
-    - save targetcli configuration
-
-- name: define ACLs for iSCSI target
-  targetcli_iscsi_acl: wwn={{ item.0.wwn }} initiator_wwn={{ item.1.wwn }}
-  with_subelements:
-    - "{{ iscsi_targets }}"
-    - initiators
-  notify:
-    - save targetcli configuration
-
-- name: assing LUNs to initiators
-  targetcli_iscsi_lun: wwn={{ item.0.wwn }} backstore_type={{ item.1.type }} backstore_name={{ item.1.name }}
-  with_subelements:
-    - "{{ iscsi_targets }}"
-    - disks
-  notify:
-    - save targetcli configuration
+  loop_control:
+    loop_var: "target"

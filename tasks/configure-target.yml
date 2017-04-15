@@ -1,0 +1,41 @@
+---
+- name: define backstore objects
+  targetcli_backstore:
+    backstore_type: "{{ disk.type }}"
+    backstore_name: "{{ disk.name }}"
+    options: "{{ disk.path }}"
+  with_items:
+    - "{{ target.disks }}"
+  loop_control:
+    loop_var: "disk"
+  notify:
+    - save targetcli configuration
+
+- name: create iSCSI target
+  targetcli_iscsi:
+    wwn: "{{ target.wwn }}"
+  notify:
+    - save targetcli configuration
+
+- name: define ACLs for iSCSI targets
+  targetcli_iscsi_acl:
+    wwn: "{{ target.wwn }}"
+    initiator_wwn: "{{ initiator.wwn }}"
+  with_items:
+    - "{{ target.initiators }}"
+  loop_control:
+    loop_var: "initiator"
+  notify:
+    - save targetcli configuration
+
+- name: assign LUNs to initiators
+  targetcli_iscsi_lun: 
+    wwn: "{{ target.wwn }}"
+    backstore_type: "{{ disk.type }}"
+    backstore_name: "{{ disk.name }}"
+  with_items:
+    - "{{ target.disks }}"
+  loop_control:
+    loop_var: "disk"
+  notify:
+    - save targetcli configuration
