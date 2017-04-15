@@ -1,5 +1,5 @@
 ---
-- name: define backstore objects
+- name: define backstore objects for target {{ target.wwn }}
   targetcli_backstore:
     backstore_type: "{{ disk.type }}"
     backstore_name: "{{ disk.name }}"
@@ -11,13 +11,13 @@
   notify:
     - save targetcli configuration
 
-- name: create iSCSI target
+- name: create iSCSI target {{ target.wwn }}
   targetcli_iscsi:
     wwn: "{{ target.wwn }}"
   notify:
     - save targetcli configuration
 
-- name: define ACLs for iSCSI targets
+- name: define ACLs for iSCSI target {{ target.wwn }}
   targetcli_iscsi_acl:
     wwn: "{{ target.wwn }}"
     initiator_wwn: "{{ initiator }}"
@@ -28,7 +28,7 @@
   notify:
     - save targetcli configuration
 
-- name: assign LUNs to initiators
+- name: assign LUNs to initiators for target {{ target.wwn }}
   targetcli_iscsi_lun: 
     wwn: "{{ target.wwn }}"
     backstore_type: "{{ disk.type }}"
