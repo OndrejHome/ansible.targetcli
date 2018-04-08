@@ -17,50 +17,66 @@ To configure the iSCSI target, the following nested variable is used which defin
 
 ```
 iscsi_targets:
-  - target1:
-    wwn: "iqn.1994-05.com.redhat:target"
+  - wwn: "iqn.1994-05.com.redhat:target"
     disks:
-      - disk1:
-        path: /dev/c7vg/LV1
+      - path: /dev/c7vg/LV1
         name: test1
         type: block
-      - disk2:
-        path: /dev/c7vg/LV2
+      - path: /dev/c7vg/LV2
         name: test2
         type: block
     initiators:
-      - client1:
-        wwn: iqn.1994-05.com.redhat:client1
-      - client2:
-        wwn: iqn.1994-05.com.redhat:client2
+      - 'iqn.1994-05.com.redhat:client1'
+      - 'iqn.1994-05.com.redhat:client2'
 ```
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Install and configure targetcli server with 2 exported luns under one WWN for 2 specified initiators.
 
     - hosts: servers
       roles:
-        - { role: OndrejHome.targetcli }
+        - { role: 'OndrejHome.targetcli' }
       vars:
         iscsi_targets:
-          - target1:
-            wwn: "iqn.1994-05.com.redhat:target"
+          - wwn: "iqn.1994-05.com.redhat:target"
             disks:
-              - disk1:
-                path: /dev/c7vg/LV1
+              - path: /dev/c7vg/LV1
                 name: test1
                 type: block
-              - disk2:
-                path: /dev/c7vg/LV2
+              - path: /dev/c7vg/LV2
                 name: test2
                 type: block
             initiators:
-              - client1:
-                wwn: iqn.1994-05.com.redhat:client1
-              - client2:
-                wwn: iqn.1994-05.com.redhat:client2
+              - 'iqn.1994-05.com.redhat:client1'
+              - 'iqn.1994-05.com.redhat:client2'
+
+This role can be also used in combination with [OndrejHome.iscsiadm](https://github.com/OndrejHome/ansible.iscsiadm) that from `v2`
+can install needed utilities and determine the initiator WWN that can be supplied for this role as shown below. Note that group
+containing the initiators in example below is named `cluster` and you should adjust it for your inventory.
+
+    - hosts: cluster
+      roles:
+        - { role: 'OndrejHome.iscsiadm' }
+
+    - hosts: storage
+      roles:
+        - { role: 'OndrejHome.targetcli' }
+      vars:
+        iscsi_targets:
+          - wwn: "iqn.1994-05.com.redhat:target"
+            disks:
+              - path: /dev/c7vg/LV1
+                name: test1
+                type: block
+            initiators: "[ {% for host in groups['cluster'] %} '{{ hostvars[host][\"iscsi_initiator_name\"] }}', {% endfor %} ]"
+
+You can even later instruct the nodes to connect to target created here.
+
+    - hosts: cluster
+      roles:
+        - { role: 'OndrejHome.iscsiadm', iscsi_target_ip: "{{ hostvars[groups['storage'][0]]['ansible_default_ipv4']['address'] }}" }
 
 License
 -------

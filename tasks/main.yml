@@ -25,7 +25,7 @@
     - save targetcli configuration
 
 - name: define ACLs for iSCSI target
-  targetcli_iscsi_acl: wwn={{ item.0.wwn }} initiator_wwn={{ item.1.wwn }}
+  targetcli_iscsi_acl: wwn={{ item.0.wwn }} initiator_wwn={{ item.1 }}
   with_subelements:
     - "{{ iscsi_targets }}"
     - initiators
