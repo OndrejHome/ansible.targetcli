@@ -11,6 +11,6 @@ galaxy_info:
   galaxy_tags:
   - system
   - storage
-  - storage:iscsi
+  - iscsi
 dependencies:
   - { role: OndrejHome.targetcli-modules }
