@@ -3,7 +3,7 @@ targetcli
 
 Targetcli target iSCSI role which takes care of installing targetcli, enabling it on boot and configuring it based on the provided variable from ansible.
 
-NOTE: Modules used by this module were separated into role OndrejHome.targetcli-modules
+NOTE: Modules used by this module were separated into role `OndrejHome.targetcli-modules`
 
 Requirements
 ------------
@@ -17,14 +17,14 @@ To configure the iSCSI target, the following nested variable is used which defin
 
 ```
 iscsi_targets:
-  - wwn: "iqn.1994-05.com.redhat:target"
+  - wwn: 'iqn.1994-05.com.redhat:target'
     disks:
-      - path: /dev/c7vg/LV1
-        name: test1
-        type: block
-      - path: /dev/c7vg/LV2
-        name: test2
-        type: block
+      - path: '/dev/c7vg/LV1'
+        name: 'test1'
+        type: 'block'
+      - path: '/dev/c7vg/LV2'
+        name: 'test2'
+        type: 'block'
     initiators:
       - 'iqn.1994-05.com.redhat:client1'
       - 'iqn.1994-05.com.redhat:client2'
@@ -40,14 +40,14 @@ Install and configure targetcli server with 2 exported luns under one WWN for 2 
         - { role: 'OndrejHome.targetcli' }
       vars:
         iscsi_targets:
-          - wwn: "iqn.1994-05.com.redhat:target"
+          - wwn: 'iqn.1994-05.com.redhat:target'
             disks:
-              - path: /dev/c7vg/LV1
-                name: test1
-                type: block
-              - path: /dev/c7vg/LV2
-                name: test2
-                type: block
+              - path: '/dev/c7vg/LV1'
+                name: 'test1'
+                type: 'block'
+              - path: '/dev/c7vg/LV2'
+                name: 'test2'
+                type: 'block'
             initiators:
               - 'iqn.1994-05.com.redhat:client1'
               - 'iqn.1994-05.com.redhat:client2'
@@ -65,11 +65,11 @@ containing the initiators in example below is named `cluster` and you should adj
         - { role: 'OndrejHome.targetcli' }
       vars:
         iscsi_targets:
-          - wwn: "iqn.1994-05.com.redhat:target"
+          - wwn: 'iqn.1994-05.com.redhat:target'
             disks:
-              - path: /dev/c7vg/LV1
-                name: test1
-                type: block
+              - path: '/dev/c7vg/LV1'
+                name: 'test1'
+                type: 'block'
             initiators: "[ {% for host in groups['cluster'] %} '{{ hostvars[host][\"iscsi_initiator_name\"] }}', {% endfor %} ]"
 
 You can even later instruct the nodes to connect to target created here.
