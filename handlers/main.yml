@@ -1,6 +1,8 @@
 ---
 - name: restart firewalld
-  service: name=firewalld state=restarted
+  service:
+    name: 'firewalld'
+    state: 'restarted'
 
 - name: save targetcli configuration
-  shell: "targetcli saveconfig"
+  command: targetcli saveconfig
