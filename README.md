@@ -28,6 +28,28 @@ iscsi_targets:
     initiators:
       - 'iqn.1994-05.com.redhat:client1'
       - 'iqn.1994-05.com.redhat:client2'
+    initiators_auth:
+      iqn.1994-05.com.redhat:client1:
+        user:     client1_user
+        password: client1_password
+      iqn.1994-05.com.redhat:client2
+        user:     client2_user
+        password: client2_password
+    attributes: "demo_mode_write_protect=0"
+    parameters: "MaxConnections=2 TargetAlias=my_target"
+    auth:       "mutual_userid=my_target_user mutual_password=my_target_password"
+
+Note:
+initiators_auth: optional 
+attributes: optional
+            these are the attributes supported by targetcli under /iscsi/<wwn>/tpg1
+            refer to "targetcli '/iscsi/<wwn>/tpg1 get attribute' for list of supported attributes
+parameters: optional
+            these are the parameters supported by targetcli under /iscsi/<wwn>/tpg1
+            refer to "targetcli '/iscsi/<wwn>/tpg1 get parameter' for list of supported parameters
+auth:       optional
+            these are the authentication properties supported by targetcli under /iscsi/<wwn>/tpg1
+            refer to "targetcli '/iscsi/<wwn>/tpg1 get auth' for list of supported authentication properties
 ```
 
 Example Playbook

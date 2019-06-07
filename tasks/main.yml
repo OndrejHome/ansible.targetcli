@@ -32,6 +32,9 @@
 - name: create iSCSI targets
   targetcli_iscsi:
     wwn: "{{ item.wwn }}"
+    attributes: "{{ item.attributes | default('') }}"
+    parameters: "{{ item.parameters | default('') }}"
+    auth:       "{{ item.auth       | default('') }}"
   with_items: "{{ iscsi_targets }}"
   notify:
     - save targetcli configuration
@@ -40,11 +43,14 @@
   targetcli_iscsi_acl:
     wwn: "{{ item.0.wwn }}"
     initiator_wwn: "{{ item.1 }}"
+    initiator_user: "{{ item[0]['initiators_auth'][item.1]['user'] | default('') }}"
+    initiator_password: "{{ item[0]['initiators_auth'][item.1]['password'] | default('') }}"
   with_subelements:
     - "{{ iscsi_targets }}"
     - initiators
   notify:
     - save targetcli configuration
+  #no_log: true
 
 - name: assing LUNs to initiators
   targetcli_iscsi_lun:
