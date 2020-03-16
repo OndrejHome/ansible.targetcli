@@ -1,12 +1,19 @@
 ---
-- name: Install targetcli packages
-  yum:
-    name: 'targetcli'
+
+- include_vars: vars_RedHat_CentOS.yml
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+- include_vars: vars_SUSE_openSUSE.yml
+  when: '(ansible_os_family == "Suse" or ansible_os_family == "openSUSE Leap")'
+
+- name: "Install package {{ targetcli_package }}"
+  package:
+    name: "{{ targetcli_package }}"
     state: 'installed'
 
-- name: Start and enable targetcli service
+- name: "Start and enable the {{ targetcli_service }} service"
   service:
-    name: 'target'
+    name: "{{ targetcli_service }}"
     enabled: true
     state: 'started'
 

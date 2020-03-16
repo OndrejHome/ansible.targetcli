@@ -1,0 +1,4 @@
+---
+
+targetcli_package: python3-targetcli-fb
+targetcli_service: targetcli
