@@ -1,0 +1,4 @@
+---
+
+# SLES12 has a different package name
+targetcli_package: targetcli-fb
