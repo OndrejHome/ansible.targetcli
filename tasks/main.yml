@@ -9,7 +9,7 @@
 - include_vars: vars_SUSE_SLES12.yml
   when: 'ansible_os_family == "Suse" and ansible_distribution_major_version|int < 15'
 
-- name: "Install package {{ targetcli_package }}"
+- name: "Install package(s) {{ targetcli_package }}"
   package:
     name: "{{ targetcli_package }}"
     state: 'installed'
