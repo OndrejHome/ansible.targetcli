@@ -1,0 +1,6 @@
+---
+
+# SLES11 has different package names
+targetcli_package:
+  - targetcli
+  - dbus-1-python
