@@ -4,3 +4,4 @@
 targetcli_package:
   - targetcli
   - dbus-1-python
+targetcli_service: target
