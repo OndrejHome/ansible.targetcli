@@ -88,6 +88,12 @@ To avoid the ansible warning for the discovered python interpreter, add a line l
 192.168.22.53 ansible_python_interpreter=/usr/bin/python3
 ```
 
+Note for SLES11.x
+------
+
+This role was tested to not work on SLES 11, if anyone is interested in getting this to work a PR for adding support is welcome - for more details refer to PR #4.
+
+
 License
 -------
 
