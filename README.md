@@ -81,7 +81,7 @@ You can even later instruct the nodes to connect to target created here.
 Note for SUSE Linux Enterprise Server 15.x / openSUSE Leap 15.x
 -------
 
-Please note that SLES 15.x / openSUSE Leap 15.x only ship with python3 installed by default. Therefore the python3 package `python3-targetcli-fb` is being installed on those platforms.
+Please note that SLES 15.x / openSUSE Leap 15.x only ship with python3 installed by default.
 
 To avoid the ansible warning for the discovered python interpreter, add a line like the following to your inventory:
 ```
