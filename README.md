@@ -88,6 +88,11 @@ To avoid the ansible warning for the discovered python interpreter, add a line l
 192.168.22.53 ansible_python_interpreter=/usr/bin/python3
 ```
 
+Note for SLES12.x and SuSEfirewall2
+------
+
+This role fails on hosts running SuSEfirewall2, as this cannot be configured by ansible. Either stop and disable the service (not recommended), or manually open port 3260/tcp and set the variable `ignore_sles12_firewall_configuration` to True.
+
 Note for SLES11.x
 ------
 
