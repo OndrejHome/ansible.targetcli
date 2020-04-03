@@ -78,6 +78,27 @@ You can even later instruct the nodes to connect to target created here.
       roles:
         - { role: 'OndrejHome.iscsiadm', iscsi_target_ip: "{{ hostvars[groups['storage'][0]]['ansible_default_ipv4']['address'] }}" }
 
+Note for SUSE Linux Enterprise Server 15.x / openSUSE Leap 15.x
+-------
+
+Please note that SLES 15.x / openSUSE Leap 15.x only ship with python3 installed by default.
+
+To avoid the ansible warning for the discovered python interpreter, add a line like the following to your inventory:
+```
+192.168.22.53 ansible_python_interpreter=/usr/bin/python3
+```
+
+Note for SLES12.x and SuSEfirewall2
+------
+
+This role fails on hosts running SuSEfirewall2, as this cannot be configured by ansible. Either stop and disable the service (not recommended), or manually open port 3260/tcp and set the variable `ignore_sles12_firewall_configuration` to True.
+
+Note for SLES11.x
+------
+
+This role was tested to not work on SLES 11, if anyone is interested in getting this to work a PR for adding support is welcome - for more details refer to PR #4.
+
+
 License
 -------
 

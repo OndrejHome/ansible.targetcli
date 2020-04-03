@@ -1,0 +1,5 @@
+---
+
+# fail if SuSEfirewall2 is found on SLES12 systems
+# set this to true to ignore this, if you know what you are doing
+ignore_sles12_firewall_configuration: false

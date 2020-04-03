@@ -1,17 +1,34 @@
 ---
-- name: Install targetcli packages
-  yum:
-    name: 'targetcli'
+
+- include_vars: vars_RedHat_CentOS.yml
+  when: ansible_distribution == 'RedHat' or ansible_distribution == 'CentOS'
+
+- include_vars: vars_SUSE_openSUSE.yml
+  when: '(ansible_os_family == "Suse" or ansible_os_family == "openSUSE Leap")'
+
+- include_vars: vars_SUSE_SLES12.yml
+  when: 'ansible_os_family == "Suse" and ansible_distribution_major_version|int == 12'
+
+- include_vars: vars_SUSE_SLES11.yml
+  when: 'ansible_os_family == "Suse" and ansible_distribution_major_version|int == 11'
+
+- name: "Install package(s) {{ targetcli_package }}"
+  package:
+    name: "{{ targetcli_package }}"
     state: 'installed'
 
-- name: Start and enable targetcli service
+- name: "Start and enable the {{ targetcli_service }} service"
   service:
-    name: 'target'
+    name: "{{ targetcli_service }}"
     enabled: true
     state: 'started'
 
 - name: populate service facts
   service_facts:
+
+- fail:
+    msg: 'This role cannot configure firewall on SLES12. You can either configure port 3260/tcp manually for this service and set the "ignore_sles12_firewall_configuration" variable to True, or you can stop and disable the SUSE2firewall.service'
+  when: 'ansible_facts.services["SuSEfirewall2.service"] is defined and ansible_facts.services["SuSEfirewall2.service"]["state"] == "running"  and ignore_sles12_firewall_configuration == "false"'
 
 - name: Enable port 3260/tcp on firewalld
   firewalld:
