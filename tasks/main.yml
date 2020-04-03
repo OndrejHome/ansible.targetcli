@@ -34,6 +34,7 @@
   firewalld:
     port: '3260/tcp'
     permanent: true
+    immediate: true
     state: 'enabled'
   when: 'ansible_facts.services["firewalld.service"] is defined and ansible_facts.services["firewalld.service"]["state"] == "running"'
   notify:
