@@ -1,3 +1,5 @@
+![Ansible Lint](https://github.com/OndrejHome/ansible.targetcli/workflows/Ansible%20Lint/badge.svg)
+
 targetcli
 =========
 
