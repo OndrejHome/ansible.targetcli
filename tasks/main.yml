@@ -87,5 +87,6 @@
   with_subelements:
     - "{{ iscsi_targets }}"
     - disks
+  ignore_errors: "{{ ansible_check_mode }}"
   notify:
     - save targetcli configuration
