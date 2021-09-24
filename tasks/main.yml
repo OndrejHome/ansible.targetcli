@@ -72,6 +72,7 @@
 - name: define ACLs for iSCSI target
   targetcli_iscsi_acl:
     wwn: "{{ item.0.wwn }}"
+    auto_add_luns: "{{ item.0.auto_add_luns | default(omit) }}"
     initiator_wwn: "{{ item.1 }}"
   with_subelements:
     - "{{ iscsi_targets }}"
@@ -82,6 +83,7 @@
 - name: assing LUNs to initiators
   targetcli_iscsi_lun:
     wwn: "{{ item.0.wwn }}"
+    auto_add_luns: "{{ item.0.auto_add_luns | default(omit) }}"
     backstore_type: "{{ item.1.type }}"
     backstore_name: "{{ item.1.name }}"
   with_subelements:
