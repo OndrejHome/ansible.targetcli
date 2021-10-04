@@ -1,0 +1,12 @@
+- name: map LUNs to ACLs
+  targetcli_iscsi_acl_mapped_lun:
+    wwn: "{{ wwn_list.wwn }}"
+    initiator_wwn: "{{ item.0.name }}"
+    backstore_type: "{{ item.1.type }}"
+    backstore_name: "{{ item.1.name }}"
+    mapped_lun_id: "{{ item.1.lun_id }}"
+  with_subelements:
+    - "{{ wwn_list.initiators }}"
+    - mapped_luns
+  notify:
+    - save targetcli configuration

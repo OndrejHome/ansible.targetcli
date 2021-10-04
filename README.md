@@ -33,7 +33,7 @@ iscsi_targets:
 Example Playbook
 ----------------
 
-Install and configure targetcli server with 2 exported luns under one WWN for 2 specified initiators.
+**Example A:** Install and configure targetcli server with 2 exported luns under one WWN for 2 specified initiators.
 
     - hosts: servers
       roles:
@@ -49,10 +49,132 @@ Install and configure targetcli server with 2 exported luns under one WWN for 2 
                 name: 'test2'
                 type: 'block'
             initiators:
-              - 'iqn.1994-05.com.redhat:client1'
-              - 'iqn.1994-05.com.redhat:client2'
+              - name: 'iqn.1994-05.com.redhat:client1'
+              - name: 'iqn.1994-05.com.redhat:client2'
 
-This role can be also used in combination with [OndrejHome.iscsiadm](https://github.com/OndrejHome/ansible.iscsiadm) that from `v2`
+**Example B:** Install and configure targetcli server with 2 exported luns under one WWN for 2 specified initiators. Each initiator has access only to one of the LUNs using the LUN ID 0.
+
+    - hosts: servers
+      roles:
+        - { role: 'OndrejHome.targetcli' }
+      vars:
+        iscsi_targets:
+          - wwn: 'iqn.1994-05.com.redhat:target'
+            disks:
+              - path: '/dev/c7vg/LV1'
+                name: 'test1'
+                type: 'block'
+              - path: '/dev/c7vg/LV2'
+                name: 'test2'
+                type: 'block'
+            initiators:
+              - name: 'iqn.1994-05.com.redhat:client1'
+	        mapped_luns:
+                  - name: test1
+                    type: block
+                    lun_id: 0
+              - name: 'iqn.1994-05.com.redhat:client2'
+	        mapped_luns:
+                  - name: test2
+                    type: block
+                    lun_id: 0
+
+**Example C:** Example of variable re-use for larger configuration.
+
+    - hosts: servers
+      roles:
+        - { role: OndrejHome.targetcli }
+      vars:
+        tmpl_disks:
+          - path: /dev/c7vg/LV1
+            name: test1
+            type: block
+            lun_id: 0
+          - path: /dev/c7vg/LV2
+            name: test2
+            type: block
+            lun_id: 1
+        wwn_list:
+          - "iqn.1994-05.com.redhat:targeta"
+          - "iqn.1994-05.com.redhat:targetb"
+        iscsi_targets: []
+        initiators_list:
+          - 'iqn.1994-05.com.redhat:client1'
+          - 'iqn.1994-05.com.redhat:client2'
+        initiators_tmpl: []
+      pre_tasks:
+      - name: generate initiators variable
+        set_fact:
+          initiators_tmpl: "{{ initiators_tmpl + [{ 'name':item, 'mapped_luns':tmpl_disks }] }}"
+        loop: "{{ initiators_list }}"
+      - name: generate iscsi_targets variable
+        set_fact:
+          iscsi_targets: "{{ iscsi_targets + [{'wwn':item, 'disks':tmpl_disks, 'auto_add_luns': False, 'initiators':initiators_tmpl }] }}"
+        loop: "{{ wwn_list }}"
+
+Above example is equivalent to below one:
+
+    - hosts: servers
+      roles:
+        - { role: OndrejHome.targetcli }
+      vars:
+        iscsi_targets:
+          - wwn: 'iqn.1994-05.com.redhat:targeta'
+            disks:
+              - path: '/dev/c7vg/LV1'
+                name: 'test1'
+                type: 'block'
+              - path: '/dev/c7vg/LV2'
+                name: 'test2'
+                type: 'block'
+            initiators:
+              - name: 'iqn.1994-05.com.redhat:client1'
+	        auto_add_luns: False
+	        mapped_luns:
+                  - name: test1
+                    type: block
+                    lun_id: 0
+                  - name: test2
+                    type: block
+                    lun_id: 1
+              - name: 'iqn.1994-05.com.redhat:client2'
+	        auto_add_luns: False
+	        mapped_luns:
+                  - name: test1
+                    type: block
+                    lun_id: 0
+                  - name: test2
+                    type: block
+                    lun_id: 1
+          - wwn: 'iqn.1994-05.com.redhat:targetb'
+            disks:
+              - path: '/dev/c7vg/LV1'
+                name: 'test1'
+                type: 'block'
+              - path: '/dev/c7vg/LV2'
+                name: 'test2'
+                type: 'block'
+            initiators:
+              - name: 'iqn.1994-05.com.redhat:client1'
+	        auto_add_luns: False
+	        mapped_luns:
+                  - name: test1
+                    type: block
+                    lun_id: 0
+                  - name: test2
+                    type: block
+                    lun_id: 1
+              - name: 'iqn.1994-05.com.redhat:client2'
+	        auto_add_luns: False
+	        mapped_luns:
+                  - name: test1
+                    type: block
+                    lun_id: 0
+                  - name: test2
+                    type: block
+                    lun_id: 1
+
+**Example D:** This role can be also used in combination with [OndrejHome.iscsiadm](https://github.com/OndrejHome/ansible.iscsiadm) that from `v2`
 can install needed utilities and determine the initiator WWN that can be supplied for this role as shown below. Note that group
 containing the initiators in example below is named `cluster` and you should adjust it for your inventory.
 

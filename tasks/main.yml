@@ -73,7 +73,7 @@
   targetcli_iscsi_acl:
     wwn: "{{ item.0.wwn }}"
     auto_add_luns: "{{ item.0.auto_add_luns | default(omit) }}"
-    initiator_wwn: "{{ item.1 }}"
+    initiator_wwn: "{{ item.1.name | default(item.1) }}"
   with_subelements:
     - "{{ iscsi_targets }}"
     - initiators
@@ -91,3 +91,9 @@
     - disks
   notify:
     - save targetcli configuration
+
+- name: Iterate over WWN targets to map LUNs to ACLs
+  include_tasks: luns_to_acls.yaml
+  loop: "{{ iscsi_targets }}"
+  loop_control:
+    loop_var: wwn_list
