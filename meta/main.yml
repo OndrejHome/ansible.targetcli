@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  author: Ondrej Faměra
+  author: yeoldegrove
   description: targetcli target iSCSI role.
   license: GPLv3
   min_ansible_version: 2.5
@@ -21,4 +21,4 @@ galaxy_info:
   - storage
   - iscsi
 dependencies:
-  - { role: OndrejHome.targetcli-modules }
+  - { role: yeoldegrove.targetcli-modules }
