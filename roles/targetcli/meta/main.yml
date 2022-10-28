@@ -1,9 +1,10 @@
 ---
 galaxy_info:
+  namespace: yeoldegrove
   author: yeoldegrove
-  description: targetcli target iSCSI role.
+  description: targetcli target iSCSI role
   license: GPLv3
-  min_ansible_version: 2.5
+  min_ansible_version: 2.9
   platforms:
   - name: EL
     versions:
@@ -20,5 +21,4 @@ galaxy_info:
   - system
   - storage
   - iscsi
-dependencies:
-  - yeoldegrove.targetcli_modules
+dependencies: []

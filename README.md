@@ -1,16 +1,14 @@
-targetcli
+yeoldegrove.targetcli Ansible Collection
 =========
 
-This is a fork of [OndrejHome/ansible.targetcli](https://github.com/OndrejHome/ansible.targetcli) that will hopefully work again with `ansible-galaxy`.
+This is a fork of [OndrejHome/ansible.targetcli](https://github.com/OndrejHome/ansible.targetcli) and [OndrejHome/ansible.targetcli-modules](https://github.com/OndrejHome/ansible.targetcli-modules) that will hopefully work again with `ansible-galaxy` as a collection.
 
-Targetcli target iSCSI role which takes care of installing targetcli, enabling it on boot and configuring it based on the provided variable from ansible.
-
-NOTE: Modules used by this module were separated into role `yeoldegrove.targetcli-modules`
+Includes a Targetcli target iSCSI role which takes care of installing targetcli, enabling it on boot and configuring it based on the provided variable from ansible.
 
 Requirements
 ------------
 
-This role is not creating any disks/partitions/LVs. It is expected that they are already present on machine or created by some other role.
+This is not creating any disks/partitions/LVs. It is expected that they are already present on machine or created by some other role.
 
 Role Variables
 --------------
@@ -32,53 +30,81 @@ iscsi_targets:
       - 'iqn.1994-05.com.redhat:client2'
 ```
 
-Example Playbook
+Example Playbooks
 ----------------
 
 Install and configure targetcli server with 2 exported luns under one WWN for 2 specified initiators.
 
-    - hosts: servers
-      roles:
-        - { role: 'yeoldegrove.targetcli' }
+```
+- name: Create iSCSI target server
+  hosts: servers
+
+  tasks:
+    - name: Create iSCSI target via targetcli
+      include_role:
+         name: yeoldegrove.iscsi_target_server.targetcli
       vars:
         iscsi_targets:
-          - wwn: 'iqn.1994-05.com.redhat:target'
-            disks:
-              - path: '/dev/c7vg/LV1'
-                name: 'test1'
-                type: 'block'
-              - path: '/dev/c7vg/LV2'
-                name: 'test2'
-                type: 'block'
-            initiators:
-              - 'iqn.1994-05.com.redhat:client1'
-              - 'iqn.1994-05.com.redhat:client2'
+        - wwn: 'iqn.1994-05.com.redhat:target'
+          disks:
+            - path: '/dev/c7vg/LV1'
+              name: 'test1'
+              type: 'block'
+            - path: '/dev/c7vg/LV2'
+              name: 'test2'
+              type: 'block'
+          initiators:
+            - 'iqn.1994-05.com.redhat:client1'
+            - 'iqn.1994-05.com.redhat:client2'
+```
 
-This role can be also used in combination with [yeoldegrove.iscsiadm](https://github.com/yeoldegrove/ansible.iscsiadm) that from `v2`
-can install needed utilities and determine the initiator WWN that can be supplied for this role as shown below. Note that group
-containing the initiators in example below is named `cluster` and you should adjust it for your inventory.
+This role can be used in combination with [community.general.open_iscsi](https://docs.ansible.com/ansible/latest/collections/community/general/open_iscsi_module.html).
 
-    - hosts: cluster
-      roles:
-        - { role: 'yeoldegrove.iscsiadm' }
+```
+- name: Login to iSCSI target server
+  hosts: clients
 
-    - hosts: storage
-      roles:
-        - { role: 'yeoldegrove.targetcli' }
-      vars:
-        iscsi_targets:
-          - wwn: 'iqn.1994-05.com.redhat:target'
-            disks:
-              - path: '/dev/c7vg/LV1'
-                name: 'test1'
-                type: 'block'
-            initiators: "[ {% for host in groups['cluster'] %} '{{ hostvars[host][\"iscsi_initiator_name\"] }}', {% endfor %} ]"
+  handlers:
+  - name: "restart iscsid"
+    service:
+      name: iscsid
+      state: restarted
 
-You can even later instruct the nodes to connect to target created here.
+  tasks:
+    - name: "Start and enable {{ iscsiadmin_service }} service"
+      ansible.builtin.service:
+        name: iscsid
+        enabled: true
+        state: started
 
-    - hosts: cluster
-      roles:
-        - { role: 'yeoldegrove.iscsiadm', iscsi_target_ip: "{{ hostvars[groups['storage'][0]]['ansible_default_ipv4']['address'] }}" }
+    - name: Set iSCSI InitiatorName
+      ansible.builtin.lineinfile:
+        path: /etc/iscsi/initiatorname.iscsi
+        regexp: '^InitiatorName='
+        line: "InitiatorName={{ iscsi_iqn }}:{{ ansible_hostname }}"
+        owner: root
+        group: root
+        mode: '0644'
+      notify: "restart iscsid"
+
+    - name: Set startup to automatic in /etc/iscsi/iscid.conf
+      ansible.builtin.lineinfile:
+        path: /etc/iscsi/iscsid.conf
+        regex: '^node\.startup\ =\ manual'
+        line: "node.startup = automatic"
+        owner: root
+        group: root
+        mode: '0600'
+      notify: "restart iscsid"
+
+    - name: Discover targets on portal and login to the one available
+      community.general.open_iscsi:
+        portal: 'iscsi-portal.example.com'
+        target: 'iqn.1994-05.com.redhat:target'
+        login: true
+        discover: true
+        auto_node_startup: true
+```
 
 Note for SUSE Linux Enterprise Server 15.x / openSUSE Leap 15.x
 -------
